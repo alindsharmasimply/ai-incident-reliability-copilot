@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: incident_copilot_postgres
+    environment:
+      POSTGRES_USER: incident_user
+      POSTGRES_PASSWORD: incident_password
+      POSTGRES_DB: incident_copilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - incident_postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    container_name: incident_copilot_backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://incident_user:incident_password@postgres:5432/incident_copilot
+      APP_NAME: AI Incident Reliability Copilot
+      APP_ENV: local
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend/app:/app/app
+
+volumes:
+  incident_postgres_data:
