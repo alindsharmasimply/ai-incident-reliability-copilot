@@ -17,7 +17,6 @@ venv/
 data/
 outputs/
 checkpoints/
-models/
 *.pt
 *.pth
 *.ckpt
@@ -27,3 +26,6 @@ models/
 .DS_Store
 .vscode/
 .idea/
+
+# builds
+build/
