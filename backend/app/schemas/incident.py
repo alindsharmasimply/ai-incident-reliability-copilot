@@ -2,6 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 from app.models.incident import IncidentSeverity, IncidentStatus
+from app.models.incident_event import IncidentEventType
 
 
 class IncidentCreate(BaseModel):
@@ -22,3 +23,18 @@ class IncidentResponse(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class IncidentEventResponse(BaseModel):
+    id: str
+    incident_id: str
+    event_type: IncidentEventType
+    message: str
+    created_by: str | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class IncidentDetailResponse(IncidentResponse):
+    events: list[IncidentEventResponse] = []

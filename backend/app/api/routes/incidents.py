@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.incident import IncidentCreate, IncidentResponse
+from app.schemas.incident import (
+    IncidentCreate,
+    IncidentResponse,
+    IncidentDetailResponse,
+    IncidentEventResponse,
+)
 from app.services.incident_service import IncidentService
 
 router = APIRouter(prefix="/incidents", tags=["Incidents"])
@@ -21,3 +26,19 @@ def create_incident(
 @router.get("", response_model=list[IncidentResponse])
 def list_incidents(db: Session = Depends(get_db)):
     return service.list_incidents(db)
+
+
+@router.delete("")
+def delete_incidents(id: str, db: Session = Depends(get_db)):
+    print(f"Deleting incident for id = {id}")
+    return service.delete_incident(db, id)
+
+
+@router.get("/{incident_id}", response_model=IncidentDetailResponse)
+def get_incident(incident_id: str, db: Session = Depends(get_db)):
+    return service.get_incident_by_id(db, incident_id=incident_id)
+
+
+@router.get("/{incident_id}/timeline", response_model=list[IncidentEventResponse])
+def get_incident_timeline(incident_id: str, db: Session = Depends(get_db)):
+    return service.get_incident_timeline(db, incident_id=incident_id)

@@ -4,7 +4,9 @@ from app.api.routes.health import router as health_router
 from app.api.routes.incidents import router as incidents_router
 from app.db.base import Base
 from app.db.session import engine
-from app.models import incident  # noqa: F401
+from app.models import incident, incident_event  # noqa: F401
+
+# TODO: Migrations need to be done using Alembic. create_all is only good for prototype not for production
 
 
 def create_app() -> FastAPI:

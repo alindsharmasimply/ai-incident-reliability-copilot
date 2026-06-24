@@ -24,7 +24,9 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./backend/app:/app/app
+      # Mounted the whole backend directory directly to /app inside the container
+      - ./backend:/app
+    working_dir: /app
 
 volumes:
   incident_postgres_data:
