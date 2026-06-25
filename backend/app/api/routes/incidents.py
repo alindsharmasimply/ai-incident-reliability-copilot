@@ -7,6 +7,7 @@ from app.schemas.incident import (
     IncidentResponse,
     IncidentDetailResponse,
     IncidentEventResponse,
+    IncidentStatusUpdate,
 )
 from app.services.incident_service import IncidentService
 
@@ -42,3 +43,12 @@ def get_incident(incident_id: str, db: Session = Depends(get_db)):
 @router.get("/{incident_id}/timeline", response_model=list[IncidentEventResponse])
 def get_incident_timeline(incident_id: str, db: Session = Depends(get_db)):
     return service.get_incident_timeline(db, incident_id=incident_id)
+
+
+@router.patch("/{incident_id}/status", response_model=IncidentDetailResponse)
+def update_incident_status(
+    incident_id: str,
+    payload: IncidentStatusUpdate,
+    db: Session = Depends(get_db),
+):
+    return service.update_incident_status(db, incident_id, payload)

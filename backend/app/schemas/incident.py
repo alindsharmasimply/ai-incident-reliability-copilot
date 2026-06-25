@@ -38,3 +38,9 @@ class IncidentEventResponse(BaseModel):
 
 class IncidentDetailResponse(IncidentResponse):
     events: list[IncidentEventResponse] = []
+
+
+class IncidentStatusUpdate(BaseModel):
+    status: IncidentStatus
+    updated_by: str = Field(min_length=2, max_length=100)
+    note: str | None = None

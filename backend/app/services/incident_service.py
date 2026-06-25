@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models.incident import Incident
 from app.models.incident_event import IncidentEvent, IncidentEventType
-from app.schemas.incident import IncidentCreate
+from app.schemas.incident import IncidentCreate, IncidentStatusUpdate
+from app.services.incident_state_machine import is_valid_transition
 
 
 class IncidentService:
@@ -55,3 +56,37 @@ class IncidentService:
     ) -> list[IncidentEvent]:
         incident = self.get_incident_by_id(db, incident_id=incident_id)
         return incident.events
+
+    def update_incident_status(
+        self, db: Session, incident_id: str, payload: IncidentStatusUpdate
+    ) -> Incident:
+        incident = self.get_incident_by_id(db, incident_id=incident_id)
+
+        current_status = incident.status
+        next_status = payload.status
+
+        if current_status == next_status:
+            return incident
+
+        if not is_valid_transition(current_status, next_status):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid status transition from {current_status.value} to {next_status.value}",
+            )
+
+        incident.status = next_status
+
+        # Everytime some change is made to the incident, record the event too
+        event = IncidentEvent(
+            incident_id=incident.id,
+            event_type=IncidentEventType.status_changed,
+            message=payload.note
+            or f"Incident status changed from {current_status.value} to {next_status.value}",
+            created_by=payload.updated_by,
+        )
+
+        db.add(event)
+        db.commit()
+        db.refresh(incident)
+
+        return self.get_incident_by_id(db, incident.id)

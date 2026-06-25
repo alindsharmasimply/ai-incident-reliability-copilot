@@ -16,6 +16,7 @@ class IncidentSeverity(str, enum.Enum):
 
 class IncidentStatus(str, enum.Enum):
     open = "OPEN"
+    acknowledged = "ACKNOWLEDGED"
     investigating = "INVESTIGATING"
     mitigated = "MITIGATED"  # often a temporary safeguard
     resolved = "RESOLVED"
@@ -36,7 +37,7 @@ class Incident(Base):
         Enum(IncidentSeverity), nullable=False
     )
     status: Mapped[IncidentStatus] = mapped_column(
-        Enum(IncidentStatus), nullable=False, default=IncidentStatus.open
+        Enum(IncidentStatus, native_enum=False), nullable=False, default=IncidentStatus.open
     )
 
     events = relationship(
