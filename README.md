@@ -10,3 +10,19 @@ docker compose up --build
 ```
 docker exec -it incident_copilot_backend env PYTHONPATH=. pytest
 ```
+## To monitor logs
+```
+docker compose logs -f backend
+```
+## To install dependencies
+```
+pip install -e .
+```
+## To create alembic migration
+```
+docker-compose exec backend alembic revision --autogenerate -m "xoxoxoxoxoxoxo"
+```
+## To run the migrations and bring the db in sync
+```
+docker compose exec backend alembic upgrade head
+```

@@ -29,7 +29,7 @@ class IncidentEvent(Base):
 
     incident_id: Mapped[str] = mapped_column(
         String(36),
-        ForeignKey("incidents.id"),
+        ForeignKey("incidents.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
